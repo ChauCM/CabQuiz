@@ -93,4 +93,9 @@ lib/features/
   - Increments the user's score maximum 100 points and minimum 20 points
   - Resets `last_answer` and `answer_time` fields for all users in preparation for the next question.
 
+# room for improvement
 
+- Add authentication
+- Add total score features
+- better and more scalable  way to rotate questions
+- Add more test coverage and improve test data
