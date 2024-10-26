@@ -86,7 +86,7 @@ const rotateQuestionsAndCalculateScores = async (context) => {
                 // Check if the answer is correct
                 if (participantData.last_answer === roomData.current_question.correct_option) {
                     // Calculate time taken to answer
-                    const timeTaken = Math.min((Date.now() - participantData.answer_time.toMillis()) / 1000, TOTAL_TIME);
+                    const timeTaken = Math.min((participantData.answer_time.toMillis() - roomData.start_time.toMillis()) / 1000, TOTAL_TIME);
 
                     // Calculate score based on time taken (faster answers get more points)
                     let score = MAX_SCORE - ((MAX_SCORE - MIN_SCORE) * timeTaken) / TOTAL_TIME;
