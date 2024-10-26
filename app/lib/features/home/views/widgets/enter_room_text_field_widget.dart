@@ -25,7 +25,14 @@ class _EnterRoomTextFieldWidgetState extends State<EnterRoomTextFieldWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FetchRoomsCubit, FetchRoomsState>(
+    return BlocConsumer<FetchRoomsCubit, FetchRoomsState>(
+      listener: (context, state) {
+        if (state is FetchRoomsSuccess &&
+            state.rooms.isNotEmpty &&
+            controller.text.isEmpty) {
+          controller.text = state.rooms.first.toString();
+        }
+      },
       builder: (context, state) {
         return Column(
           children: [

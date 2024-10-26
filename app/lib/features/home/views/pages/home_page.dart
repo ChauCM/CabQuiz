@@ -4,8 +4,10 @@ import 'package:cabquiz/features/home/blocs/join_room_cubit/join_room_cubit.dart
 import 'package:cabquiz/features/home/domain/repository/home_firebase_repository.dart';
 import 'package:cabquiz/features/home/domain/repository/home_repository.dart';
 import 'package:cabquiz/features/home/views/widgets/enter_room_text_field_widget.dart';
+import 'package:cabquiz/routes/app_router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 @RoutePage()
@@ -83,17 +85,15 @@ class _HomePageState extends State<HomePage> {
                 child: BlocConsumer<JoinRoomCubit, JoinRoomState>(
                   listener: (context, state) {
                     if (state.status == JoinRoomStatus.loading) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('joining room...'),
-                        ),
-                      );
+                      EasyLoading.show();
                     } else if (state.status == JoinRoomStatus.failure &&
                         state.errorMessage != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.errorMessage!)),
-                      );
+                      EasyLoading.showError(state.errorMessage!);
+                    } else if (state.status == JoinRoomStatus.success) {
+                      EasyLoading.dismiss();
+                      context.router.push(const QuizRoute());
                     }
+                    context.read<JoinRoomCubit>().resetStatus();
                   },
                   builder: (context, state) {
                     return ElevatedButton(

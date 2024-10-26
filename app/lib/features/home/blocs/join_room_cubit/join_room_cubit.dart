@@ -2,10 +2,9 @@ import 'package:bloc/bloc.dart';
 import 'package:cabquiz/features/home/domain/dto/user/user_dto.dart';
 import 'package:cabquiz/features/home/domain/repository/home_repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meta/meta.dart';
 
-part 'join_room_state.dart';
 part 'join_room_cubit.freezed.dart';
+part 'join_room_state.dart';
 
 class JoinRoomCubit extends Cubit<JoinRoomState> {
   JoinRoomCubit({required this.repository}) : super(const JoinRoomState());
@@ -24,7 +23,10 @@ class JoinRoomCubit extends Cubit<JoinRoomState> {
     emit(state.copyWith(status: JoinRoomStatus.loading));
 
     if (state.username == null || state.roomId == null) {
-      emitError('Username and room ID are required');
+      emit(state.copyWith(
+        status: JoinRoomStatus.failure,
+        errorMessage: 'Username and room ID are required',
+      ));
       return;
     }
 
@@ -34,14 +36,15 @@ class JoinRoomCubit extends Cubit<JoinRoomState> {
     );
 
     result.fold(
-      (l) => emitError(l.message),
+      (l) => emit(state.copyWith(
+        status: JoinRoomStatus.failure,
+        errorMessage: l.message,
+      )),
       (r) => emit(state.copyWith(status: JoinRoomStatus.success)),
     );
   }
 
-  void emitError(String message) {
-    emit(state.copyWith(status: JoinRoomStatus.failure, errorMessage: message));
-    // reset the state
-    emit(state.copyWith(status: JoinRoomStatus.initial, errorMessage: null));
+  void resetStatus() {
+    emit(state.copyWith(status: JoinRoomStatus.initial));
   }
 }

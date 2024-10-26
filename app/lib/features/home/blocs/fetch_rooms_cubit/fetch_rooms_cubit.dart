@@ -12,7 +12,7 @@ class FetchRoomsCubit extends Cubit<FetchRoomsState> {
 
   Future<void> fetchRooms() async {
     emit(const FetchRoomsState.loading());
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     final result = await repository.getRooms();
     result.fold(
       (l) => emit(FetchRoomsState.failure(l.message)),
