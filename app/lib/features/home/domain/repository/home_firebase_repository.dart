@@ -52,7 +52,7 @@ class HomeFirebaseRepository implements HomeRepository {
         await roomRef
             .collection('participants')
             .doc(user.username)
-            .set(user.toJson());
+            .set(user.toJson()..addAll({'score': 0}));
       }
 
       return Right('room_$roomId');

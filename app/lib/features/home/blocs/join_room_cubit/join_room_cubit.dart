@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cabquiz/features/home/domain/dto/user/user_dto.dart';
 import 'package:cabquiz/features/home/domain/repository/home_repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';

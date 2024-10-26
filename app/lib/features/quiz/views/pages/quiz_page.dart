@@ -7,6 +7,7 @@ import 'package:cabquiz/features/quiz/views/widgets/answer_section_widget.dart';
 import 'package:cabquiz/features/quiz/views/widgets/question_timer_widget.dart';
 import 'package:cabquiz/resources/app_colors.dart';
 import 'package:cabquiz/resources/assets.gen.dart';
+import 'package:cabquiz/routes/app_router.gr.dart';
 import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,7 +59,12 @@ class QuizPage extends StatelessWidget implements AutoRouteWrapper {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.router.push(LeaderBoardRoute(
+                roomId: roomId,
+                username: username,
+              ));
+            },
             icon: Assets.icons.moreCircle.svg(
               width: 28.w,
             ),

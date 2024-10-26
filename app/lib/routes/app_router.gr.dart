@@ -36,10 +36,19 @@ class HomeRoute extends _i4.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i2.LeaderBoardPage]
-class LeaderBoardRoute extends _i4.PageRouteInfo<void> {
-  const LeaderBoardRoute({List<_i4.PageRouteInfo>? children})
-      : super(
+class LeaderBoardRoute extends _i4.PageRouteInfo<LeaderBoardRouteArgs> {
+  LeaderBoardRoute({
+    _i5.Key? key,
+    required int roomId,
+    required String username,
+    List<_i4.PageRouteInfo>? children,
+  }) : super(
           LeaderBoardRoute.name,
+          args: LeaderBoardRouteArgs(
+            key: key,
+            roomId: roomId,
+            username: username,
+          ),
           initialChildren: children,
         );
 
@@ -48,9 +57,34 @@ class LeaderBoardRoute extends _i4.PageRouteInfo<void> {
   static _i4.PageInfo page = _i4.PageInfo(
     name,
     builder: (data) {
-      return const _i2.LeaderBoardPage();
+      final args = data.argsAs<LeaderBoardRouteArgs>();
+      return _i4.WrappedRoute(
+          child: _i2.LeaderBoardPage(
+        key: args.key,
+        roomId: args.roomId,
+        username: args.username,
+      ));
     },
   );
+}
+
+class LeaderBoardRouteArgs {
+  const LeaderBoardRouteArgs({
+    this.key,
+    required this.roomId,
+    required this.username,
+  });
+
+  final _i5.Key? key;
+
+  final int roomId;
+
+  final String username;
+
+  @override
+  String toString() {
+    return 'LeaderBoardRouteArgs{key: $key, roomId: $roomId, username: $username}';
+  }
 }
 
 /// generated route for

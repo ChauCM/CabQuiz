@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cabquiz/features/quiz/domain/dto/room_dto/room_dto.dart';
 import 'package:cabquiz/features/quiz/domain/repository/quiz_repository.dart';
 import 'package:cabquiz/features/quiz/models/room_dpo/room_dpo.dart';

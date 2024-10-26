@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cabquiz/features/quiz/domain/repository/quiz_repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
