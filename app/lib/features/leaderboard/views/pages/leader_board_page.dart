@@ -79,8 +79,9 @@ class LeaderBoardPage extends StatelessWidget implements AutoRouteWrapper {
                   itemBuilder: (context, index) {
                     final backgroundColor =
                         users[index].username == username ? Colors.white : null;
-                    final foregroundColor =
-                        users[index].username == username ? Colors.black : null;
+                    final foregroundColor = users[index].username == username
+                        ? Colors.black
+                        : Colors.white;
 
                     return Container(
                       height: 84.h,
