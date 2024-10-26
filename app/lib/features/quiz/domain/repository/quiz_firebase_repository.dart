@@ -28,6 +28,28 @@ class QuizFirebaseRepository implements QuizRepository {
   }
 
   @override
+  Future<Either<Failure, Stream<int?>>> listenToUserScore({
+    required int roomId,
+    required String username,
+  }) async {
+    try {
+      return Right(
+        firestore
+            .collection('rooms')
+            .doc('room_$roomId')
+            .collection('participants')
+            .doc(username)
+            .snapshots()
+            .map((snapshot) => snapshot.data()?['score'] as int?),
+      );
+    } on FirebaseException catch (e) {
+      return Left(Failure.fromFirestoreError(e));
+    } catch (e) {
+      return Left(Failure.fromAppError(e as Exception));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> sendAnswer(
       {required int roomId,
       required String username,

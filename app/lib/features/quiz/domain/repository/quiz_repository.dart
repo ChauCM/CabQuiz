@@ -7,6 +7,11 @@ abstract class QuizRepository {
     required int roomId,
   });
 
+  Future<Either<Failure, Stream<int?>>> listenToUserScore({
+    required int roomId,
+    required String username,
+  });
+
   Future<Either<Failure, void>> sendAnswer({
     required int roomId,
     required String username,

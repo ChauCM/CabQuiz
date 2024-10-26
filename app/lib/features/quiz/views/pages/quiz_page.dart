@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cabquiz/features/quiz/blocs/room_cubit/room_cubit.dart';
+import 'package:cabquiz/features/quiz/blocs/user_score_cubit/user_score_cubit.dart';
 import 'package:cabquiz/features/quiz/domain/repository/quiz_firebase_repository.dart';
 import 'package:cabquiz/features/quiz/domain/repository/quiz_repository.dart';
 import 'package:cabquiz/features/quiz/views/widgets/answer_section_widget.dart';
@@ -23,11 +24,22 @@ class QuizPage extends StatelessWidget implements AutoRouteWrapper {
   Widget wrappedRoute(BuildContext context) {
     return RepositoryProvider<QuizRepository>(
       create: (context) => QuizFirebaseRepository(),
-      child: BlocProvider(
-        create: (context) => RoomCubit(
-          roomId: roomId,
-          quizRepository: context.read<QuizRepository>(),
-        )..connectToRoom(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => RoomCubit(
+              roomId: roomId,
+              quizRepository: context.read<QuizRepository>(),
+            )..connectToRoom(),
+          ),
+          BlocProvider(
+            create: (context) => UserScoreCubit(
+              roomId: roomId,
+              username: username,
+              quizRepository: context.read<QuizRepository>(),
+            )..connectToUserScore(),
+          ),
+        ],
         child: this,
       ),
     );
@@ -53,82 +65,123 @@ class QuizPage extends StatelessWidget implements AutoRouteWrapper {
           ),
         ],
       ),
-      body: BlocBuilder<RoomCubit, RoomState>(
-        builder: (context, state) {
-          if (state is RoomConnected) {
-            final question = state.room.question;
-            final startTime = state.room.startTime;
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
-                children: [
-                  if (startTime != null)
-                    QuestionTimerWidget(
-                      key: ValueKey(startTime),
-                      startTime: startTime,
-                    ),
-                  SizedBox(height: 12.h),
-                  if (question != null)
-                    Column(
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          height: 210.h,
-                          padding: EdgeInsets.symmetric(horizontal: 24.w),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: AppColors.greyScale50,
-                            borderRadius: BorderRadius.circular(20.r),
-                            border: Border.all(
-                              color: AppColors.greyScale200,
-                            ),
-                          ),
-                          child: Text(
-                            question.questionText,
-                            maxLines: 3,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 24.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+      body: Column(
+        children: [
+          BlocBuilder<RoomCubit, RoomState>(
+            builder: (context, state) {
+              if (state is RoomConnected) {
+                final question = state.room.question;
+                final startTime = state.room.startTime;
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    children: [
+                      if (startTime != null)
+                        QuestionTimerWidget(
+                          key: ValueKey(startTime),
+                          startTime: startTime,
                         ),
-                        SizedBox(height: 24.h),
-                        AnswerSectionWidget(
-                          question: question,
-                          selectedAnswer: state.room.userAnswer,
-                          onAnswerSelected: state.room.userAnswer != null
-                              ? null
-                              : (index) {
-                                  // sometime we can use repository without cubit (NOT RECOMMENDED)
+                      SizedBox(height: 12.h),
+                      if (question != null)
+                        Column(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: 210.h,
+                              padding: EdgeInsets.symmetric(horizontal: 24.w),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: AppColors.greyScale50,
+                                borderRadius: BorderRadius.circular(20.r),
+                                border: Border.all(
+                                  color: AppColors.greyScale200,
+                                ),
+                              ),
+                              child: Text(
+                                question.questionText,
+                                maxLines: 3,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 24.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 24.h),
+                            AnswerSectionWidget(
+                              question: question,
+                              selectedAnswer: state.room.userAnswer,
+                              onAnswerSelected: state.room.userAnswer != null
+                                  ? null
+                                  : (index) {
+                                      // sometime we can use repository without cubit (NOT RECOMMENDED)
 
-                                  EasyLoading.show();
-                                  final response =
-                                      context.read<QuizRepository>().sendAnswer(
+                                      EasyLoading.show();
+                                      final response = context
+                                          .read<QuizRepository>()
+                                          .sendAnswer(
                                             answerIndex: index,
                                             roomId: roomId,
                                             username: username,
                                           );
-                                  EasyLoading.dismiss();
-                                  response.fold(
-                                    (l) => EasyLoading.showError(l.message),
-                                    (r) =>
-                                        context.read<RoomCubit>().selectAnswer(
+                                      EasyLoading.dismiss();
+                                      response.fold(
+                                        (l) => EasyLoading.showError(l.message),
+                                        (r) => context
+                                            .read<RoomCubit>()
+                                            .selectAnswer(
                                               answerIndex: index,
                                             ),
-                                  );
-                                },
+                                      );
+                                    },
+                            ),
+                          ],
                         ),
-                      ],
+                    ],
+                  ),
+                );
+              } else if (state is RoomError) {
+                return Center(child: Text(state.errorMessage));
+              }
+              return const Center(child: Text('connecting...'));
+            },
+          ),
+          BlocListener<UserScoreCubit, UserScoreState>(
+            // detect when user score is increased
+            listenWhen: (previous, current) =>
+                previous is UserScoreConnected &&
+                current is UserScoreConnected &&
+                current.currentScore != null &&
+                current.currentScore! > current.previousScore,
+            listener: (context, state) {
+              final currentState = state as UserScoreConnected;
+              final scoreDifference =
+                  currentState.currentScore! - currentState.previousScore;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Correct! + $scoreDifference',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            },
+            child: BlocBuilder<UserScoreCubit, UserScoreState>(
+              builder: (context, state) {
+                if (state is UserScoreConnected) {
+                  return Text(
+                    '$username: ${state.currentScore ?? 0}',
+                    style: TextStyle(
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.bold,
                     ),
-                ],
-              ),
-            );
-          } else if (state is RoomError) {
-            return Center(child: Text(state.errorMessage));
-          }
-          return const Center(child: Text('connecting...'));
-        },
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
