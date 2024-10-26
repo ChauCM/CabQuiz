@@ -56,6 +56,17 @@ class _MyAppState extends State<MyApp> {
               color: AppColors.greyScale500,
             ),
           ),
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.black,
+            elevation: 0,
+            centerTitle: true,
+            titleTextStyle: TextStyle(
+              fontSize: 24.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.greyScale900,
+            ),
+          ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
               textStyle: TextStyle(
@@ -65,6 +76,15 @@ class _MyAppState extends State<MyApp> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(100.r),
               ),
+            ),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              textStyle: TextStyle(
+                fontSize: 24.sp,
+                fontWeight: FontWeight.w500,
+              ),
+              foregroundColor: AppColors.greyScale900,
             ),
           ),
           colorScheme: const ColorScheme.light(

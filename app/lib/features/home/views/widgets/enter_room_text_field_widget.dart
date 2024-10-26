@@ -31,6 +31,7 @@ class _EnterRoomTextFieldWidgetState extends State<EnterRoomTextFieldWidget> {
             state.rooms.isNotEmpty &&
             controller.text.isEmpty) {
           controller.text = state.rooms.first.toString();
+          context.read<JoinRoomCubit>().setRoomId(controller.text);
         }
       },
       builder: (context, state) {

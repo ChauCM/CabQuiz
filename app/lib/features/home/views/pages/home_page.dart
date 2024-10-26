@@ -46,9 +46,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Join a Room'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
-        elevation: 0,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -91,7 +88,10 @@ class _HomePageState extends State<HomePage> {
                       EasyLoading.showError(state.errorMessage!);
                     } else if (state.status == JoinRoomStatus.success) {
                       EasyLoading.dismiss();
-                      context.router.push(const QuizRoute());
+                      context.router.push(QuizRoute(
+                        roomId: state.roomId!,
+                        username: state.username!,
+                      ));
                     }
                     context.read<JoinRoomCubit>().resetStatus();
                   },

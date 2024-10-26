@@ -85,12 +85,11 @@ const rotateQuestionsAndCalculateScores = async (context) => {
             if (participantData.last_answer !== undefined && participantData.answer_time !== undefined) {
                 // Check if the answer is correct
                 if (participantData.last_answer === roomData.current_question.correct_option) {
-                    // Calculate remaining time
-                    const timeTaken = (Date.now() - participantData.answer_time.toMillis()) / 1000;
-                    const timeRemaining = Math.max(0, TOTAL_TIME - timeTaken);
+                    // Calculate time taken to answer
+                    const timeTaken = Math.min((Date.now() - participantData.answer_time.toMillis()) / 1000, TOTAL_TIME);
 
-                    // Calculate score based on time remaining
-                    let score = MIN_SCORE + ((MAX_SCORE - MIN_SCORE) * timeRemaining) / TOTAL_TIME;
+                    // Calculate score based on time taken (faster answers get more points)
+                    let score = MAX_SCORE - ((MAX_SCORE - MIN_SCORE) * timeTaken) / TOTAL_TIME;
                     score = Math.round(score);
 
                     // Update user's score

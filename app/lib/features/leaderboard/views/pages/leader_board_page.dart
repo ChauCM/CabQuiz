@@ -11,7 +11,7 @@ class LeaderBoardPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Leader board'),
       ),
-      body: Center(child: const Text('Leader board Page')),
+      body: const Center(child: Text('Leader board Page')),
     );
   }
 }

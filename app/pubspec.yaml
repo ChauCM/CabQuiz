@@ -45,6 +45,7 @@ dependencies:
   dio: ^5.7.0
   flutter_bloc: ^8.1.6
   flutter_easyloading: ^3.0.5
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -73,7 +74,7 @@ flutter_gen:
 
   # Optional
   integrations:
-  flutter_svg: true
+    flutter_svg: true
 
 flutter:
 

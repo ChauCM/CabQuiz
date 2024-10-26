@@ -13,6 +13,7 @@ import 'package:cabquiz/features/home/views/pages/home_page.dart' as _i1;
 import 'package:cabquiz/features/leaderboard/views/pages/leader_board_page.dart'
     as _i2;
 import 'package:cabquiz/features/quiz/views/pages/quiz_page.dart' as _i3;
+import 'package:flutter/material.dart' as _i5;
 
 /// generated route for
 /// [_i1.HomePage]
@@ -54,10 +55,19 @@ class LeaderBoardRoute extends _i4.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.QuizPage]
-class QuizRoute extends _i4.PageRouteInfo<void> {
-  const QuizRoute({List<_i4.PageRouteInfo>? children})
-      : super(
+class QuizRoute extends _i4.PageRouteInfo<QuizRouteArgs> {
+  QuizRoute({
+    _i5.Key? key,
+    required int roomId,
+    required String username,
+    List<_i4.PageRouteInfo>? children,
+  }) : super(
           QuizRoute.name,
+          args: QuizRouteArgs(
+            key: key,
+            roomId: roomId,
+            username: username,
+          ),
           initialChildren: children,
         );
 
@@ -66,7 +76,32 @@ class QuizRoute extends _i4.PageRouteInfo<void> {
   static _i4.PageInfo page = _i4.PageInfo(
     name,
     builder: (data) {
-      return const _i3.QuizPage();
+      final args = data.argsAs<QuizRouteArgs>();
+      return _i4.WrappedRoute(
+          child: _i3.QuizPage(
+        key: args.key,
+        roomId: args.roomId,
+        username: args.username,
+      ));
     },
   );
+}
+
+class QuizRouteArgs {
+  const QuizRouteArgs({
+    this.key,
+    required this.roomId,
+    required this.username,
+  });
+
+  final _i5.Key? key;
+
+  final int roomId;
+
+  final String username;
+
+  @override
+  String toString() {
+    return 'QuizRouteArgs{key: $key, roomId: $roomId, username: $username}';
+  }
 }
