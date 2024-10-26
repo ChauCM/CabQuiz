@@ -1,7 +1,6 @@
 import 'package:cabquiz/features/leaderboard/models/leader_board_dpo/leader_board_dpo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:random_avatar/random_avatar.dart';
 
 part 'leader_board_dto.freezed.dart';
 part 'leader_board_dto.g.dart';
@@ -18,7 +17,6 @@ class LeaderBoardDto with _$LeaderBoardDto {
   LeaderBoardDpo toDpo() => LeaderBoardDpo(
         username: username,
         score: score,
-        avatarCode: RandomAvatarString(username),
       );
 
   factory LeaderBoardDto.fromFirestore(DocumentSnapshot snapshot) {

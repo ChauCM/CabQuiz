@@ -7,7 +7,6 @@ class LeaderBoardDpo with _$LeaderBoardDpo {
   factory LeaderBoardDpo({
     required String username,
     @Default(0) int score,
-    required String avatarCode,
   }) = _LeaderBoardDpo;
 
   const LeaderBoardDpo._();

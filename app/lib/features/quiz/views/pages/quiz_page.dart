@@ -3,6 +3,7 @@ import 'package:cabquiz/features/quiz/blocs/room_cubit/room_cubit.dart';
 import 'package:cabquiz/features/quiz/blocs/user_score_cubit/user_score_cubit.dart';
 import 'package:cabquiz/features/quiz/domain/repository/quiz_firebase_repository.dart';
 import 'package:cabquiz/features/quiz/domain/repository/quiz_repository.dart';
+import 'package:cabquiz/features/quiz/models/question_dpo/question_dpo.dart';
 import 'package:cabquiz/features/quiz/views/widgets/answer_section_widget.dart';
 import 'package:cabquiz/features/quiz/views/widgets/question_timer_widget.dart';
 import 'package:cabquiz/resources/app_colors.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:random_avatar/random_avatar.dart';
 
 @RoutePage()
 class QuizPage extends StatelessWidget implements AutoRouteWrapper {
@@ -91,28 +93,7 @@ class QuizPage extends StatelessWidget implements AutoRouteWrapper {
                       if (question != null)
                         Column(
                           children: [
-                            Container(
-                              width: double.infinity,
-                              height: 210.h,
-                              padding: EdgeInsets.symmetric(horizontal: 24.w),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: AppColors.greyScale50,
-                                borderRadius: BorderRadius.circular(20.r),
-                                border: Border.all(
-                                  color: AppColors.greyScale200,
-                                ),
-                              ),
-                              child: Text(
-                                question.questionText,
-                                maxLines: 3,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 24.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            _buildQuestionBoard(question),
                             SizedBox(height: 24.h),
                             AnswerSectionWidget(
                               question: question,
@@ -152,42 +133,82 @@ class QuizPage extends StatelessWidget implements AutoRouteWrapper {
               return const Center(child: Text('connecting...'));
             },
           ),
-          BlocListener<UserScoreCubit, UserScoreState>(
-            // detect when user score is increased
-            listenWhen: (previous, current) =>
-                previous is UserScoreConnected &&
-                current is UserScoreConnected &&
-                current.currentScore != null &&
-                current.currentScore! > current.previousScore,
-            listener: (context, state) {
-              final currentState = state as UserScoreConnected;
-              final scoreDifference =
-                  currentState.currentScore! - currentState.previousScore;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Correct! + $scoreDifference',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              );
-            },
-            child: BlocBuilder<UserScoreCubit, UserScoreState>(
-              builder: (context, state) {
-                if (state is UserScoreConnected) {
-                  return Text(
-                    '$username: ${state.currentScore ?? 0}',
-                    style: TextStyle(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
+          _buildCurrentUserInfo(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuestionBoard(QuestionDpo question) {
+    return Container(
+      width: double.infinity,
+      height: 210.h,
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.greyScale50,
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: AppColors.greyScale200,
+        ),
+      ),
+      child: Text(
+        question.questionText,
+        maxLines: 3,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 24.sp,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCurrentUserInfo() {
+    return BlocListener<UserScoreCubit, UserScoreState>(
+      // detect when user score is increased
+      listenWhen: (previous, current) =>
+          previous is UserScoreConnected &&
+          current is UserScoreConnected &&
+          current.currentScore != null &&
+          current.currentScore! > current.previousScore,
+      listener: (context, state) {
+        final currentState = state as UserScoreConnected;
+        final scoreDifference =
+            currentState.currentScore! - currentState.previousScore;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Correct! + $scoreDifference',
+              textAlign: TextAlign.center,
             ),
           ),
-        ],
+        );
+      },
+      child: BlocBuilder<UserScoreCubit, UserScoreState>(
+        builder: (context, state) {
+          if (state is UserScoreConnected) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                RandomAvatar(
+                  username,
+                  width: 48.w,
+                  height: 48.w,
+                ),
+                SizedBox(width: 12.w),
+                Text(
+                  '$username: ${state.currentScore ?? 0}',
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

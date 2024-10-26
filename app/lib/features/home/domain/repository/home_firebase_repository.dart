@@ -43,9 +43,9 @@ class HomeFirebaseRepository implements HomeRepository {
       }
 
       // Check if user already exists in the room
-      final participants = await roomRef.collection('participants').get();
-      final userExists =
-          participants.docs.any((p) => p.data()['name'] == user.username);
+      final participants =
+          await roomRef.collection('participants').doc(user.username).get();
+      final userExists = participants.exists;
 
       if (!userExists) {
         // Add user to the room if they don't exist

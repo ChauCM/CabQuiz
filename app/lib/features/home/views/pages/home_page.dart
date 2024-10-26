@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:random_avatar/random_avatar.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget implements AutoRouteWrapper {
@@ -58,6 +59,19 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(height: 24.h),
+                    BlocSelector<JoinRoomCubit, JoinRoomState, String>(
+                      selector: (state) => state.username ?? 'chaucao',
+                      builder: (context, username) {
+                        return Center(
+                          child: RandomAvatar(
+                            username.isNotEmpty ? username : 'chaucao',
+                            width: 120.w,
+                            height: 120.w,
+                          ),
+                        );
+                      },
+                    ),
                     SizedBox(height: 24.h),
                     const Text('Username'),
                     SizedBox(height: 16.h),

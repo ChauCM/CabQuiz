@@ -102,7 +102,7 @@ class LeaderBoardPage extends StatelessWidget implements AutoRouteWrapper {
                             width: 60.w,
                             height: 60.w,
                             child: RandomAvatar(
-                              users[index].avatarCode,
+                              users[index].username,
                             ),
                           ),
                           SizedBox(width: 16.w),

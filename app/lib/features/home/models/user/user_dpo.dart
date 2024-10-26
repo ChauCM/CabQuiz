@@ -4,5 +4,7 @@ part 'user_dpo.freezed.dart';
 
 @freezed
 class UserDpo with _$UserDpo {
-  factory UserDpo({String? username, String? avatarCode}) = _UserDpo;
+  factory UserDpo({
+    String? username,
+  }) = _UserDpo;
 }

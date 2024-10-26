@@ -8,12 +8,10 @@ part 'user_dto.g.dart';
 class UserDto with _$UserDto {
   factory UserDto({
     required String username,
-    String? avatarCode,
   }) = _UserDto;
 
   factory UserDto.fromDpo(UserDpo dpo) => UserDto(
         username: dpo.username!,
-        avatarCode: dpo.avatarCode,
       );
 
   factory UserDto.fromJson(Map<String, dynamic> json) =>
