@@ -28,7 +28,7 @@ class HomeRoute extends _i4.PageRouteInfo<void> {
   static _i4.PageInfo page = _i4.PageInfo(
     name,
     builder: (data) {
-      return const _i1.HomePage();
+      return _i4.WrappedRoute(child: const _i1.HomePage());
     },
   );
 }
