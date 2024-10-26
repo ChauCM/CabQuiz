@@ -50,18 +50,9 @@ const rotateQuestionsAndCalculateScores = async (context) => {
         return;
     }
 
-    // Get all questions
-    const questionsSnapshot = await questionsRef.get();
-    const questions = [];
-
-    questionsSnapshot.forEach(doc => {
-        questions.push({ id: doc.id, ...doc.data() });
-    });
-
-    if (questions.length === 0) {
-        console.error("No questions found!");
-        return;
-    }
+    // Get the count of questions
+    const snapshot = await questionsRef.count().get();
+    const questionCount = snapshot.data().count;
 
     // Iterate through each room and rotate the question
     const batch = db.batch();
@@ -70,8 +61,12 @@ const rotateQuestionsAndCalculateScores = async (context) => {
         const roomData = roomDoc.data();
         const roomId = roomDoc.id;
 
-        // Select a random question from the questions array
-        const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+        // Generate a random question ID
+        const randomQuestionId = `question_${Math.floor(Math.random() * questionCount)}`;
+
+        // Get the random question
+        const randomQuestionDoc = await questionsRef.doc(randomQuestionId).get();
+        const randomQuestion = { id: randomQuestionDoc.id, ...randomQuestionDoc.data() };
 
         // Get participants in the room
         const participantsRef = roomDoc.ref.collection('participants');

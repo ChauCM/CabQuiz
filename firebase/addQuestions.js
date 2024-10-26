@@ -447,7 +447,7 @@ async function addQuestions() {
     const questionsRef = db.collection('questions');
 
     questions.forEach((question, index) => {
-        const docRef = questionsRef.doc();
+        const docRef = questionsRef.doc(`question_${index}`);
         batch.set(docRef, question);
     });
 
