@@ -68,16 +68,18 @@ const rotateQuestionsAndCalculateScores = async (context) => {
         const randomQuestionDoc = await questionsRef.doc(randomQuestionId).get();
         const randomQuestion = { id: randomQuestionDoc.id, ...randomQuestionDoc.data() };
 
-        // Get participants in the room
+        // Get only participants who have answered the last question
         const participantsRef = roomDoc.ref.collection('participants');
-        const participantsSnapshot = await participantsRef.get();
+        const participantsSnapshot = await participantsRef
+            .where('last_answer', '!=', null)
+            .get();
 
         participantsSnapshot.forEach(participantDoc => {
             const participantData = participantDoc.data();
             const userId = participantDoc.id;
 
             // Calculate score if the user answered the last question
-            if (participantData.last_answer !== undefined && participantData.answer_time !== undefined) {
+            if (participantData.answer_time !== undefined) {
                 // Check if the answer is correct
                 if (participantData.last_answer === roomData.current_question.correct_option) {
                     // Calculate time taken to answer
@@ -89,17 +91,19 @@ const rotateQuestionsAndCalculateScores = async (context) => {
 
                     // Update user's score
                     batch.update(participantDoc.ref, {
-                        score: admin.firestore.FieldValue.increment(score)
+                        score: admin.firestore.FieldValue.increment(score),
+                        answer_time: admin.firestore.FieldValue.delete(),
+                        last_answer: admin.firestore.FieldValue.delete()
                     });
 
                     console.log(`User ${userId} in room ${roomId} earned ${score} points!`);
+                } else {
+                    // If the answer is incorrect, just remove the answer_time and last_answer fields
+                    batch.update(participantDoc.ref, {
+                        answer_time: admin.firestore.FieldValue.delete(),
+                        last_answer: admin.firestore.FieldValue.delete()
+                    });
                 }
-
-                // Remove answer_time and last_answer fields
-                batch.update(participantDoc.ref, {
-                    answer_time: admin.firestore.FieldValue.delete(),
-                    last_answer: admin.firestore.FieldValue.delete()
-                });
             }
         });
 
