@@ -1,6 +1,16 @@
 # CabQuiz
 
 
+# How to run.
+
+## Run app
+1. cd /app
+2. run `flutter pub get` to get the dependencies
+3. run `flutter pub run build_runner build` to generate code
+3. run `flutter run` to run the app
+
+
+
 
 # App Architecture
 
